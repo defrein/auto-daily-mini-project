@@ -245,11 +245,11 @@ Make sure the project is fully functional and engaging!"""
                 {"role": "user", "content": prompt}
             ],
             "temperature": 0.7,
-            "max_tokens": 4000
+            "max_tokens": 3000  # Reduced from 4000 to speed up response
         }
         
         try:
-            response = requests.post(self.api_url, headers=headers, json=data, timeout=60)
+            response = requests.post(self.api_url, headers=headers, json=data, timeout=300)  # Increased to 2 minutes
             response.raise_for_status()
             
             result = response.json()
