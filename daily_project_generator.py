@@ -473,17 +473,23 @@ This is a fallback project created by the Daily Mini Project Generator when the 
             self.repo.index.commit(commit_message)
             logging.info(f"Committed: {commit_message}")
             
-            # Push (if remote is configured)
+            # Push to GitHub
             try:
-                origin = self.repo.remote(name='origin')
-                origin.push()
-                logging.info("Pushed to remote repository")
+                # Check if origin remote exists
+                if 'origin' in [remote.name for remote in self.repo.remotes]:
+                    origin = self.repo.remote(name='origin')
+                    # Push to the current branch (master in this case)
+                    origin.push()
+                    logging.info("Successfully pushed to GitHub repository")
+                else:
+                    logging.warning("No 'origin' remote configured. Please add remote manually.")
+                    logging.info("To add remote: git remote add origin https://github.com/defrein/auto-daily-mini-project.git")
             except Exception as e:
-                logging.warning(f"Could not push to remote: {e}")
-                logging.info("To push manually, configure a remote repository")
+                logging.error(f"Failed to push to GitHub: {e}")
+                logging.info("Project committed locally but not pushed to remote")
             
         except Exception as e:
-            logging.error(f"Error committing and pushing: {e}")
+            logging.error(f"Error committing: {e}")
     
     def generate_daily_project(self):
         """Main function to generate daily project"""
