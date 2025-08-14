@@ -30,13 +30,22 @@ logging.basicConfig(
 
 class DailyProjectGenerator:
     def __init__(self):
-        self.api_key = os.getenv('DEEPSEEK_API_KEY')
-        self.api_url = "https://api.deepseek.com/chat/completions"
+        self.api_key = os.getenv('DEEPSEEK_API_KEY')  # Will work with OpenAI key too
+        # Detect API provider based on key format
+        if self.api_key and (self.api_key.startswith('sk-proj-') or self.api_key.startswith('sk-')):
+            self.api_url = "https://api.openai.com/v1/chat/completions"
+            self.model = "gpt-3.5-turbo"
+            logging.info("Using OpenAI API")
+        else:
+            self.api_url = "https://api.deepseek.com/chat/completions"
+            self.model = "deepseek-chat"
+            logging.info("Using DeepSeek API")
+            
         self.projects_dir = os.path.join(os.getcwd(), 'projects')
         self.repo_path = os.getcwd()
         
         if not self.api_key:
-            raise ValueError("DEEPSEEK_API_KEY environment variable not set")
+            raise ValueError("API key not set in environment variable")
         
         # Ensure projects directory exists
         os.makedirs(self.projects_dir, exist_ok=True)
@@ -134,7 +143,7 @@ Respond with just the project title and a brief 2-sentence description."""
         }
         
         data = {
-            "model": "deepseek-chat",
+            "model": self.model,
             "messages": [
                 {"role": "user", "content": prompt}
             ],
@@ -202,7 +211,7 @@ Make sure the project is fully functional and engaging!"""
         }
         
         data = {
-            "model": "deepseek-chat",
+            "model": self.model,
             "messages": [
                 {"role": "user", "content": prompt}
             ],
