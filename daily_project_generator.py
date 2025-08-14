@@ -30,16 +30,24 @@ logging.basicConfig(
 
 class DailyProjectGenerator:
     def __init__(self):
-        self.api_key = os.getenv('DEEPSEEK_API_KEY')  # Will work with OpenAI key too
+        self.api_key = os.getenv('DEEPSEEK_API_KEY')
+        
         # Detect API provider based on key format
-        if self.api_key and (self.api_key.startswith('sk-proj-') or self.api_key.startswith('sk-')):
+        if self.api_key and self.api_key.startswith('sk-proj-'):
+            # OpenAI project key
             self.api_url = "https://api.openai.com/v1/chat/completions"
             self.model = "gpt-3.5-turbo"
             logging.info("Using OpenAI API")
-        else:
+        elif self.api_key and len(self.api_key) > 50:
+            # Likely DeepSeek key (they're usually longer)
             self.api_url = "https://api.deepseek.com/chat/completions"
             self.model = "deepseek-chat"
             logging.info("Using DeepSeek API")
+        else:
+            # Default to DeepSeek for shorter keys or unknown format
+            self.api_url = "https://api.deepseek.com/chat/completions"
+            self.model = "deepseek-chat"
+            logging.info("Using DeepSeek API (default)")
             
         self.projects_dir = os.path.join(os.getcwd(), 'projects')
         self.repo_path = os.getcwd()
@@ -47,11 +55,32 @@ class DailyProjectGenerator:
         if not self.api_key:
             raise ValueError("API key not set in environment variable")
         
+        logging.info(f"API Key length: {len(self.api_key)}")
+        logging.info(f"API URL: {self.api_url}")
+        
         # Ensure projects directory exists
         os.makedirs(self.projects_dir, exist_ok=True)
         
         # Initialize git repo if not already initialized
         self.init_git_repo()
+    
+    def validate_api_key(self):
+        """Validate the API key format and provide helpful feedback"""
+        if not self.api_key:
+            logging.error("❌ No API key found")
+            return False
+        
+        if len(self.api_key) < 50:
+            logging.warning(f"⚠️  API key seems short ({len(self.api_key)} chars). DeepSeek keys are usually 60+ characters")
+            logging.warning("💡 Make sure you copied the complete key from https://platform.deepseek.com/")
+            return False
+        
+        if not self.api_key.startswith('sk-'):
+            logging.warning("⚠️  API key doesn't start with 'sk-'. This might not be a valid format")
+            return False
+        
+        logging.info("✅ API key format looks valid")
+        return True
     
     def init_git_repo(self):
         """Initialize git repository if not already initialized"""
@@ -529,6 +558,23 @@ This is a fallback project created by the Daily Mini Project Generator when the 
     def generate_daily_project(self):
         """Main function to generate daily project"""
         logging.info("Starting daily project generation...")
+        
+        # Validate API key first
+        if not self.validate_api_key():
+            logging.error("❌ API key validation failed. Using fallback project.")
+            # Create fallback project anyway
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            current_time = datetime.now().strftime("%H-%M")
+            title = f"{current_date} - Fallback Project (Invalid API Key)"
+            project_dir = os.path.join(self.projects_dir, f"{current_date}-{current_time}-API-Key-Issue")
+            os.makedirs(project_dir, exist_ok=True)
+            files = self.create_fallback_project(title)
+            for filename, content in files.items():
+                with open(os.path.join(project_dir, filename), 'w', encoding='utf-8') as f:
+                    f.write(content)
+            logging.info(f"Fallback project created: {project_dir}")
+            self.commit_and_push(project_dir)
+            return True
         
         try:
             # Generate project idea

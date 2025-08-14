@@ -50,3 +50,21 @@ A visually stunning interactive star chart where users log their daily mood by p
 2025-08-15 03:51:49,802 - INFO - Committed: Add daily project: 2025-08-15-03-51-Fallback-Project
 2025-08-15 03:51:52,151 - INFO - Successfully pushed to GitHub repository
 2025-08-15 03:51:52,151 - INFO - Daily project generated successfully: D:\Code\Python\daily-mini-project\projects\2025-08-15-03-51-Fallback-Project
+2025-08-15 03:52:07,772 - INFO - Using OpenAI API
+2025-08-15 03:52:07,775 - INFO - Git repository found
+2025-08-15 03:52:07,775 - INFO - Starting daily project generation...
+2025-08-15 03:52:08,455 - ERROR - Error generating project idea: 401 Client Error: Unauthorized for url: https://api.openai.com/v1/chat/completions
+2025-08-15 03:52:08,455 - INFO - Generated idea: Interactive Web App - A creative web application for 2025-08-15
+2025-08-15 03:52:09,140 - ERROR - Error generating project code: 401 Client Error: Unauthorized for url: https://api.openai.com/v1/chat/completions
+2025-08-15 03:52:09,142 - INFO - Project created: D:\Code\Python\daily-mini-project\projects\2025-08-15-03-52-Fallback-Project
+2025-08-15 03:52:09,301 - INFO - Committed: Add daily project: 2025-08-15-03-52-Fallback-Project
+2025-08-15 03:52:11,517 - INFO - Successfully pushed to GitHub repository
+2025-08-15 03:52:11,517 - INFO - Daily project generated successfully: D:\Code\Python\daily-mini-project\projects\2025-08-15-03-52-Fallback-Project
+2025-08-15 03:53:42,322 - INFO - Using DeepSeek API (default)
+2025-08-15 03:53:42,322 - INFO - API Key length: 35
+2025-08-15 03:53:42,323 - INFO - API URL: https://api.deepseek.com/chat/completions
+2025-08-15 03:53:42,326 - INFO - Git repository found
+2025-08-15 03:53:42,326 - INFO - Starting daily project generation...
+2025-08-15 03:53:51,892 - INFO - Generated idea: **"Cosmic Mood Tracker: A Stellar Emotion Journal"**  
+
+An interactive web app where users log their daily mood by placing stars in a virtual night sky, with each star's color and brightness reflecting their emotional state. The sky evolves over time, creating a beautiful, personalized galaxy of memories.
