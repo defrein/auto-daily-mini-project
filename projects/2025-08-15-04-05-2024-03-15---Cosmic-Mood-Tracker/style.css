@@ -1,0 +1,260 @@
+/* Base Styles */
+:root {
+    --space-black: #0b0e23;
+    --space-blue: #1a1f4b;
+    --star-yellow: #f9e076;
+    --happy-color: #f9e076;
+    --sad-color: #76b5f9;
+    --angry-color: #f97676;
+    --calm-color: #76f9a4;
+    --excited-color: #c876f9;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: var(--space-black);
+    color: white;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 90% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 20%);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeIn 1.5s ease-out;
+}
+
+header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #f9e076, #76b5f9, #c876f9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+header p {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+/* Controls Section */
+.controls {
+    background-color: var(--space-blue);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.mood-selector, .date-selector {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+select, input[type="date"] {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--happy-color);
+    color: var(--space-black);
+    font-family: 'Space Mono', monospace;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: flex-end;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#addStar {
+    background-color: var(--happy-color);
+}
+
+/* Filters Section */
+.filters {
+    margin-bottom: 2rem;
+}
+
+.filters h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+}
+
+#clearFilters {
+    background-color: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#clearFilters:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Sky Section */
+.sky {
+    position: relative;
+    min-height: 500px;
+    background-color: var(--space-blue);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    margin-bottom: 2rem;
+    background-image: 
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at 30% 70%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px, 100px 100px, 150px 150px;
+}
+
+.constellation-line {
+    position: absolute;
+    height: 2px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.1));
+    transform-origin: left center;
+    z-index: 1;
+}
+
+/* Star Styles */
+.star {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 2;
+    box-shadow: 0 0 10px currentColor;
+}
+
+.star::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background-color: currentColor;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+}
+
+.star:hover {
+    transform: scale(1.5);
+}
+
+.star:hover::before {
+    width: 20px;
+    height: 20px;
+    opacity: 0.3;
+}
+
+/* Mood-specific colors */
+.star.happy { background-color: var(--happy-color); color: var(--happy-color); }
+.star.sad { background-color: var(--sad-color); color: var(--sad-color); }
+.star.angry { background-color: var(--angry-color); color: var(--angry-color); }
+.star.calm { background-color: var(--calm-color); color: var(--calm-color); }
+.star.excited { background-color: var(--excited-color); color: var(--excited-color); }
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    header h1 {
+        font-size: 2rem;
+    }
+    
+    .controls {
+        flex-direction: column;
+    }
+    
+    button {
+        align-self: stretch;
+    }
+    
+    .sky {
+        min-height: 400px;
+    }
+}
+
+@media (max-width: 480px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .filter-options {
+        flex-direction: column;
+    }
+}

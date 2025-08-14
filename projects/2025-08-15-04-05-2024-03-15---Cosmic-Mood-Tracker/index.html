@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Mood Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cosmic Mood Tracker</h1>
+            <p>Chart your emotions across the universe of your mind</p>
+        </header>
+
+        <main>
+            <section class="controls">
+                <div class="mood-selector">
+                    <label for="mood">Today's Mood:</label>
+                    <select id="mood">
+                        <option value="happy">🌟 Happy</option>
+                        <option value="sad">🌌 Sad</option>
+                        <option value="angry">🔥 Angry</option>
+                        <option value="calm">🌀 Calm</option>
+                        <option value="excited">⚡ Excited</option>
+                    </select>
+                </div>
+                <div class="date-selector">
+                    <label for="date">Date:</label>
+                    <input type="date" id="date">
+                </div>
+                <button id="addStar">Add Star to Sky</button>
+            </section>
+
+            <section class="filters">
+                <h2>Filter Stars</h2>
+                <div class="filter-options">
+                    <select id="filterMood">
+                        <option value="all">All Moods</option>
+                        <option value="happy">Happy</option>
+                        <option value="sad">Sad</option>
+                        <option value="angry">Angry</option>
+                        <option value="calm">Calm</option>
+                        <option value="excited">Excited</option>
+                    </select>
+                    <input type="date" id="filterDate">
+                    <button id="clearFilters">Clear Filters</button>
+                </div>
+            </section>
+
+            <section class="sky" id="sky">
+                <!-- Stars will be added here dynamically -->
+                <div class="constellation-line"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>Your cosmic mood diary • Made with stardust</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
