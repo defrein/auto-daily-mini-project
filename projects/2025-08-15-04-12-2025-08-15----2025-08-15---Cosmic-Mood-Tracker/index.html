@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Mood Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="cosmic-container">
+        <header class="cosmic-header">
+            <h1>Cosmic Mood Tracker</h1>
+            <p>Your emotional journey through the stars</p>
+        </header>
+
+        <main class="cosmic-main">
+            <div class="controls">
+                <div class="mood-selector">
+                    <button class="mood-btn happy" data-mood="happy">🌟 Happy</button>
+                    <button class="mood-btn sad" data-mood="sad">🌑 Sad</button>
+                    <button class="mood-btn calm" data-mood="calm">💫 Calm</button>
+                    <button class="mood-btn excited" data-mood="excited">✨ Excited</button>
+                    <button class="mood-btn anxious" data-mood="anxious">☄️ Anxious</button>
+                </div>
+                <div class="date-selector">
+                    <input type="date" id="mood-date" value="">
+                </div>
+            </div>
+
+            <div class="star-chart" id="star-chart">
+                <!-- Stars will be added here dynamically -->
+                <div class="constellation-line"></div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <h3>Mood Trend</h3>
+                    <div class="trend-indicator" id="trend-indicator"></div>
+                </div>
+                <div class="stat-box">
+                    <h3>Recent Moods</h3>
+                    <ul class="recent-moods" id="recent-moods"></ul>
+                </div>
+            </div>
+        </main>
+
+        <footer class="cosmic-footer">
+            <p>Your celestial diary • Made with stardust</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

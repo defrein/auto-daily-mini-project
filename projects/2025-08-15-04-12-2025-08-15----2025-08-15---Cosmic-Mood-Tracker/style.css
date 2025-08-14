@@ -1,0 +1,261 @@
+/* Base Styles */
+:root {
+    --happy-color: #ffd700;
+    --sad-color: #6a5acd;
+    --calm-color: #87ceeb;
+    --excited-color: #ff69b4;
+    --anxious-color: #ff8c00;
+    --bg-dark: #0a0e17;
+    --bg-light: #1a2138;
+    --text-light: #e0e0e0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.cosmic-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Header Styles */
+.cosmic-header {
+    text-align: center;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, var(--bg-light), var(--bg-dark));
+    border-radius: 0 0 20px 20px;
+    margin-bottom: 2rem;
+}
+
+.cosmic-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(to right, #ffd700, #87ceeb, #ff69b4);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Main Content Styles */
+.cosmic-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: var(--bg-light);
+    border-radius: 10px;
+}
+
+.mood-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.mood-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mood-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.happy { background-color: var(--happy-color); color: #333; }
+.sad { background-color: var(--sad-color); color: white; }
+.calm { background-color: var(--calm-color); color: #333; }
+.excited { background-color: var(--excited-color); color: white; }
+.anxious { background-color: var(--anxious-color); color: white; }
+
+.date-selector input {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #444;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+}
+
+/* Star Chart Styles */
+.star-chart {
+    flex: 1;
+    min-height: 400px;
+    background-color: var(--bg-light);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    background-image: 
+        radial-gradient(white 1px, transparent 1px),
+        radial-gradient(white 1px, transparent 1px);
+    background-size: 30px 30px;
+    background-position: 0 0, 15px 15px;
+}
+
+.star {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: twinkle 3s infinite alternate;
+}
+
+.star:hover {
+    transform: scale(1.5);
+    box-shadow: 0 0 15px currentColor;
+    animation: pulse 0.5s infinite alternate;
+}
+
+.star::after {
+    content: attr(data-date);
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+
+.star:hover::after {
+    opacity: 1;
+}
+
+.constellation-line {
+    position: absolute;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transform-origin: left center;
+}
+
+/* Stats Section */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.stat-box {
+    background-color: var(--bg-light);
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.trend-indicator {
+    height: 20px;
+    border-radius: 10px;
+    margin-top: 0.5rem;
+    background: linear-gradient(to right, var(--sad-color), var(--happy-color));
+    position: relative;
+}
+
+.trend-indicator::after {
+    content: '';
+    position: absolute;
+    top: -5px;
+    width: 10px;
+    height: 30px;
+    background-color: white;
+    border-radius: 5px;
+    transition: left 1s ease;
+}
+
+.recent-moods {
+    list-style: none;
+    margin-top: 0.5rem;
+}
+
+.recent-moods li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #444;
+}
+
+/* Footer Styles */
+.cosmic-footer {
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    color: #888;
+}
+
+/* Animations */
+@keyframes twinkle {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1.5); }
+    100% { transform: scale(1.8); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+    }
+    
+    .mood-selector {
+        justify-content: center;
+    }
+    
+    .cosmic-header h1 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .mood-btn span {
+        display: none;
+    }
+    
+    .mood-btn {
+        padding: 0.5rem;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
