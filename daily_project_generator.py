@@ -67,19 +67,19 @@ class DailyProjectGenerator:
     def validate_api_key(self):
         """Validate the API key format and provide helpful feedback"""
         if not self.api_key:
-            logging.error("❌ No API key found")
-            return False
-        
-        if len(self.api_key) < 50:
-            logging.warning(f"⚠️  API key seems short ({len(self.api_key)} chars). DeepSeek keys are usually 60+ characters")
-            logging.warning("💡 Make sure you copied the complete key from https://platform.deepseek.com/")
+            logging.error("API key not found")
             return False
         
         if not self.api_key.startswith('sk-'):
-            logging.warning("⚠️  API key doesn't start with 'sk-'. This might not be a valid format")
+            logging.warning("API key doesn't start with 'sk-'. This might not be a valid format")
             return False
         
-        logging.info("✅ API key format looks valid")
+        # DeepSeek keys can be shorter than OpenAI keys, so be more flexible
+        if len(self.api_key) < 20:
+            logging.warning(f"API key seems very short ({len(self.api_key)} chars)")
+            return False
+        
+        logging.info("API key format looks valid")
         return True
     
     def init_git_repo(self):
@@ -265,21 +265,28 @@ Make sure the project is fully functional and engaging!"""
         
         try:
             if generated_content:
+                logging.info(f"Generated content preview: {generated_content[:200]}...")
+                
                 # Extract title
                 title_lines = [line for line in generated_content.split('\n') if line.startswith('Title:')]
                 if title_lines:
                     title = title_lines[0].replace('Title:', '').strip()
                 else:
-                    title = f"{current_date} - AI Generated Project"
+                    # Try to extract title from the content
+                    lines = generated_content.split('\n')
+                    for line in lines:
+                        if 'Cosmic Mood Tracker' in line or any(word in line.lower() for word in ['tracker', 'app', 'project', 'generator']):
+                            clean_line = line.strip('*"').strip()
+                            title = f"{current_date} - {clean_line}"
+                            break
+                    else:
+                        title = f"{current_date} - AI Generated Project"
+                
+                logging.info(f"Extracted title: {title}")
                 
                 # Create project directory
                 safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
-                project_dir = os.path.join(self.projects_dir, f"{current_date}-{safe_title.replace(' ', '-')}")
-                
-                # If directory exists, add time to make it unique
-                if os.path.exists(project_dir):
-                    project_dir = os.path.join(self.projects_dir, f"{current_date}-{current_time}-{safe_title.replace(' ', '-')}")
-                
+                project_dir = os.path.join(self.projects_dir, f"{current_date}-{current_time}-{safe_title.replace(' ', '-')}")
                 os.makedirs(project_dir, exist_ok=True)
                 
                 # Extract and save files
@@ -290,9 +297,24 @@ Make sure the project is fully functional and engaging!"""
                     'readme.md': self.extract_code_block(generated_content, 'markdown')
                 }
                 
+                # Log extraction results
+                for filename, content in files.items():
+                    if content:
+                        logging.info(f"Extracted {filename}: {len(content)} characters")
+                    else:
+                        logging.warning(f"Failed to extract {filename}")
+                
                 # If extraction fails, create basic template
-                if not files['index.html']:
+                if not any(files.values()):
+                    logging.warning("No files extracted successfully, creating fallback project")
                     files = self.create_fallback_project(title)
+                else:
+                    # Fill missing files with fallback content
+                    fallback_files = self.create_fallback_project(title)
+                    for filename, content in files.items():
+                        if not content:
+                            files[filename] = fallback_files[filename]
+                            logging.info(f"Using fallback for {filename}")
             else:
                 # No generated content, create fallback project
                 title = f"{current_date} - Fallback Project"
@@ -329,33 +351,44 @@ Make sure the project is fully functional and engaging!"""
         """Extract code block for specific language"""
         try:
             lines = content.split('\n')
-            start_markers = [f'```{language}', f'{language}:']
+            start_markers = [f'```{language}', f'{language}:', f'```html', f'```css', f'```javascript', f'```markdown']
             
+            # Look for the specific language block
             for i, line in enumerate(lines):
-                if any(marker in line.lower() for marker in start_markers):
-                    # Find the start of the code block
+                line_lower = line.lower().strip()
+                
+                # Check for direct code block markers
+                if f'```{language}' in line_lower:
                     start_idx = i + 1
-                    if '```' in line:
-                        # Already at code block start
-                        pass
-                    else:
-                        # Look for next ```
-                        for j in range(i + 1, len(lines)):
-                            if lines[j].strip().startswith('```'):
-                                start_idx = j + 1
-                                break
-                    
                     # Find the end of the code block
-                    end_idx = len(lines)
                     for j in range(start_idx, len(lines)):
-                        if lines[j].strip() == '```' or lines[j].strip().startswith('```'):
-                            end_idx = j
+                        if lines[j].strip() == '```':
+                            return '\n'.join(lines[start_idx:j])
+                
+                # Check for file name markers like "index.html:" or "style.css:"
+                if f'{language}:' in line_lower or (language == 'html' and 'index.html:' in line_lower) or \
+                   (language == 'css' and 'style.css:' in line_lower) or \
+                   (language == 'javascript' and 'script.js:' in line_lower) or \
+                   (language == 'markdown' and 'readme.md:' in line_lower):
+                    
+                    # Look for the next code block
+                    start_idx = i + 1
+                    for j in range(i + 1, len(lines)):
+                        if lines[j].strip().startswith('```'):
+                            start_idx = j + 1
                             break
                     
-                    return '\n'.join(lines[start_idx:end_idx])
+                    # Find the end of the code block
+                    for j in range(start_idx, len(lines)):
+                        if lines[j].strip() == '```':
+                            return '\n'.join(lines[start_idx:j])
+                        # Also stop at next file marker
+                        if any(marker in lines[j].lower() for marker in ['html:', 'css:', 'js:', 'javascript:', 'markdown:']):
+                            return '\n'.join(lines[start_idx:j])
             
             return None
-        except Exception:
+        except Exception as e:
+            logging.error(f"Error extracting {language} code: {e}")
             return None
     
     def create_fallback_project(self, title):
@@ -561,7 +594,7 @@ This is a fallback project created by the Daily Mini Project Generator when the 
         
         # Validate API key first
         if not self.validate_api_key():
-            logging.error("❌ API key validation failed. Using fallback project.")
+            logging.error("API key validation failed. Using fallback project.")
             # Create fallback project anyway
             current_date = datetime.now().strftime("%Y-%m-%d")
             current_time = datetime.now().strftime("%H-%M")

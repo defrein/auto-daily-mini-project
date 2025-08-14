@@ -39,8 +39,8 @@ env/
 *.swp
 *.swo
 
-# Logs
-*.log
+# Logs (keep daily_projects.log for monitoring)
+# *.log
 
 # OS
 .DS_Store
@@ -49,3 +49,6 @@ desktop.ini
 
 # Git
 .git/
+
+# Note: projects/ directory is intentionally NOT ignored
+# so that generated projects are committed and pushed
