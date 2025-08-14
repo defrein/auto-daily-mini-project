@@ -1,0 +1,66 @@
+/* Fallback Project Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+}
+
+header h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+header p {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.content {
+    margin: 2rem 0;
+}
+
+#click-btn {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+#click-btn:hover {
+    transform: translateY(-2px);
+}
+
+#message {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 10px;
+    background: #f8f9fa;
+    color: #333;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
