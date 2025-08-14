@@ -9,6 +9,7 @@ import json
 import requests
 import schedule
 import time
+import argparse
 from datetime import datetime
 from git import Repo
 from dotenv import load_dotenv
@@ -221,31 +222,44 @@ Make sure the project is fully functional and engaging!"""
     
     def parse_and_save_project(self, generated_content):
         """Parse the generated content and save files"""
-        if not generated_content:
-            return None
-        
         current_date = datetime.now().strftime("%Y-%m-%d")
+        current_time = datetime.now().strftime("%H-%M")
         
         try:
-            # Extract title
-            title_line = [line for line in generated_content.split('\n') if line.startswith('Title:')][0]
-            title = title_line.replace('Title:', '').strip()
-            
-            # Create project directory
-            safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
-            project_dir = os.path.join(self.projects_dir, f"{current_date}-{safe_title.replace(' ', '-')}")
-            os.makedirs(project_dir, exist_ok=True)
-            
-            # Extract and save files
-            files = {
-                'index.html': self.extract_code_block(generated_content, 'html'),
-                'style.css': self.extract_code_block(generated_content, 'css'),
-                'script.js': self.extract_code_block(generated_content, 'javascript'),
-                'readme.md': self.extract_code_block(generated_content, 'markdown')
-            }
-            
-            # If extraction fails, create basic template
-            if not files['index.html']:
+            if generated_content:
+                # Extract title
+                title_lines = [line for line in generated_content.split('\n') if line.startswith('Title:')]
+                if title_lines:
+                    title = title_lines[0].replace('Title:', '').strip()
+                else:
+                    title = f"{current_date} - AI Generated Project"
+                
+                # Create project directory
+                safe_title = "".join(c for c in title if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                project_dir = os.path.join(self.projects_dir, f"{current_date}-{safe_title.replace(' ', '-')}")
+                
+                # If directory exists, add time to make it unique
+                if os.path.exists(project_dir):
+                    project_dir = os.path.join(self.projects_dir, f"{current_date}-{current_time}-{safe_title.replace(' ', '-')}")
+                
+                os.makedirs(project_dir, exist_ok=True)
+                
+                # Extract and save files
+                files = {
+                    'index.html': self.extract_code_block(generated_content, 'html'),
+                    'style.css': self.extract_code_block(generated_content, 'css'),
+                    'script.js': self.extract_code_block(generated_content, 'javascript'),
+                    'readme.md': self.extract_code_block(generated_content, 'markdown')
+                }
+                
+                # If extraction fails, create basic template
+                if not files['index.html']:
+                    files = self.create_fallback_project(title)
+            else:
+                # No generated content, create fallback project
+                title = f"{current_date} - Fallback Project"
+                project_dir = os.path.join(self.projects_dir, f"{current_date}-{current_time}-Fallback-Project")
+                os.makedirs(project_dir, exist_ok=True)
                 files = self.create_fallback_project(title)
             
             # Save files
@@ -259,7 +273,19 @@ Make sure the project is fully functional and engaging!"""
             
         except Exception as e:
             logging.error(f"Error parsing and saving project: {e}")
-            return None
+            # Create emergency fallback
+            try:
+                fallback_dir = os.path.join(self.projects_dir, f"{current_date}-{current_time}-Emergency-Fallback")
+                os.makedirs(fallback_dir, exist_ok=True)
+                files = self.create_fallback_project(f"{current_date} - Emergency Fallback Project")
+                for filename, content in files.items():
+                    with open(os.path.join(fallback_dir, filename), 'w', encoding='utf-8') as f:
+                        f.write(content)
+                logging.info(f"Emergency fallback project created: {fallback_dir}")
+                return fallback_dir
+            except Exception as e2:
+                logging.error(f"Failed to create emergency fallback: {e2}")
+                return None
     
     def extract_code_block(self, content, language):
         """Extract code block for specific language"""
@@ -532,10 +558,29 @@ This is a fallback project created by the Daily Mini Project Generator when the 
             time.sleep(60)  # Check every minute
 
 if __name__ == "__main__":
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='Daily Mini Project Generator')
+    parser.add_argument('--now', action='store_true', 
+                       help='Generate and push a project immediately without starting the scheduler')
+    args = parser.parse_args()
+    
     try:
         generator = DailyProjectGenerator()
         
-        # Generate a project immediately for testing
+        if args.now:
+            # Generate project immediately and exit
+            print("🚀 Generating project immediately...")
+            success = generator.generate_daily_project()
+            
+            if success:
+                print("✅ Project generated and pushed successfully!")
+            else:
+                print("❌ Failed to generate project")
+            
+            # Exit without starting scheduler
+            exit(0 if success else 1)
+        
+        # Default behavior: generate initial project and ask about scheduler
         print("Generating initial project...")
         success = generator.generate_daily_project()
         
@@ -550,6 +595,7 @@ if __name__ == "__main__":
             generator.start_scheduler()
         else:
             print("Scheduler not started. Run this script again to start it.")
+            print("💡 Tip: Use --now flag to generate projects immediately without the scheduler")
             
     except KeyboardInterrupt:
         print("\nScheduler stopped by user")

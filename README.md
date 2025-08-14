@@ -26,7 +26,13 @@ Each generated project follows strict rules:
 
 ## Usage
 
-### Run Once (Generate Immediate Project)
+### Generate Project Immediately
+```bash
+python daily_project_generator.py --now
+```
+This will generate a project right now and push it to GitHub without starting the scheduler.
+
+### Run Once (Generate + Ask for Scheduler)
 ```bash
 python daily_project_generator.py
 ```
@@ -38,6 +44,10 @@ Do you want to start the daily scheduler? (y/n): y
 ```
 
 The scheduler will generate a new project every day at 9:00 AM.
+
+### Windows Shortcuts
+- **Generate Now**: `generate-now.bat`
+- **Regular Run**: `run.bat`
 
 ## Project Structure
 
